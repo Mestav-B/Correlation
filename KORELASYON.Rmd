@@ -1,0 +1,158 @@
+---
+title: "Korelasyon"
+author: "Burcu Mestav"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Korelasyon
+
+Korelasyon analizi, iki değişken veya bir değişkenin iki veya daha çok değişken arasında doğrusal ilişki olup olmadığını, varsa bu ilişkinin yönünü ve derecesinin ne olduğunu belirlemek için kullanılan istatistiksel bir yöntemdir. 
+İlişkinin yönünü ve derecesini belirten katsayıya korelasyon katsayısı (**r**) denir. 
+Bu katsayı -1 ile +1 arasında değerler alır.
+Katsayı değeri -1ve +1’e yaklaştıkça ilişkinin derecesi artarken, 0’a yaklaştıkça ilişkinin derecesi azalır.
+Korelasyon derecesi 0 ise iki değişken arasında doğrusal bir ilişki olmadığı, +1 ise mükemmel pozitif bir ilişki olduğu, -1 ise mükemmel negatif bir ilişki olduğu anlamına gelir.
+
+## Kütüphaneler 
+
+ **Libraries** :)
+
+```{r results="hide", message=FALSE, warning=FALSE}
+library(psych)
+library(PerformanceAnalytics)
+library(tidyverse)
+library(summarytools)
+library(corrplot)
+library(car)
+library(Hmisc)
+library(plyr)
+library(lmtest)
+library(HH)
+library(scatterplot3d)
+library(ggiraphExtra)
+library(ggcorrplot)
+library(ggpubr)
+library(plotly)
+library(correlation)
+
+```
+
+
+## importing dataset
+
+```{r}
+load("Doubs.RData")
+
+attach(env)
+```
+
+#Between two variables
+
+canımın istediğini yazıyorum : **kahve**
+```{r}
+data("mtcars")
+summary(mtcars)
+```
+
+
+
+
+```{r}
+cor(dfs,ele, method="pearson")
+cor(dfs,ele, method="spearman")
+cor(dfs,ele, method="kendall")
+
+ggplot(env, aes(x=dfs, y=ele)) +
+  geom_point(size=4, color="blue", shape=20)
+```
+
+#Correlation matrix: correlations for all variables
+
+```{r message=FALSE, warning=FALSE}
+corr=round(cor(env),
+      digits = 2 # rounded to 2 decimals
+)
+
+corr
+
+# cor coef., 95% CI, significant
+correlation::correlation(env,
+                         include_factors = TRUE, method = "auto"
+)
+
+chart.Correlation(env,
+                  method="pearson",
+                  histogram=TRUE,
+                  pch=16)
+
+
+chart.Correlation(env,
+                  method="spearman",
+                  histogram=TRUE,
+                  pch=16)
+
+
+chart.Correlation(env,
+                  method="kendall",
+                  histogram=TRUE,
+                  pch=16)
+
+
+```
+
+
+# improved correlation matrix
+## 1
+
+```{r}
+
+corrplot(cor(env))
+
+
+```
+
+## 2
+
+```{r}
+
+corrplot(cor(env),
+         method = "number",
+         type = "upper" # show only upper side
+)
+
+```
+
+
+## 3
+
+```{r}
+
+ggcorrplot(corr, hc.order = TRUE, 
+           type = "lower", 
+           lab = TRUE, 
+           lab_size = 3, 
+           method="circle", 
+           colors = c("tomato2", "white", "springgreen3"), 
+           ggtheme=theme_bw)
+
+```
+
+
+## 4
+
+```{r}
+
+corrplot.mixed(corr, 
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+
+
+```
+
